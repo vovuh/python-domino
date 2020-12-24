@@ -57,9 +57,11 @@ class Game:
                 skip_count = 0
             else:
                 print('The current player have no valid dominoes to add so he skipped the move')
+                keyboard.wait('enter')
+                time.sleep(0.1)
                 skip_count += 1
             if skip_count == 2:
-                print('Two moves in a row were skipped so the result is a fish!\n')
+                print('\nTwo moves in a row were skipped so the result is a fish!\n')
                 human_hand, computer_hand = self._human.get_hand_score(), self._computer.get_hand_score()
                 if human_hand < computer_hand:
                     print('You won!\n')
@@ -76,4 +78,12 @@ class Game:
                     print('Computer owned you with a random strategy :)\n')
                 break
             current_player, next_player = next_player, current_player
-        keyboard.wait('enter')
+
+        print('Press ESC to exit or enter to start a new game\n')
+        while True:
+            if keyboard.is_pressed('enter'):
+                time.sleep(0.1)
+                break
+            elif keyboard.is_pressed('esc'):
+                time.sleep(0.1)
+                return

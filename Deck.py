@@ -1,4 +1,4 @@
-from random import choice
+import random
 
 
 class Deck:
@@ -9,7 +9,7 @@ class Deck:
                 self._dominoes.append((left, right))
 
     def eject_domino(self):
-        value = choice(self._dominoes)
+        value = random.choice(self._dominoes)
         self._dominoes.remove(value)
         return value
 

@@ -1,5 +1,5 @@
 import keyboard
-from random import choice
+import random
 import time
 
 
@@ -32,18 +32,14 @@ class Player:
         return result
 
     def best_domino(self):
-        index = 28
-        for value in range(1, 7):
-            if (value, value) in self._hand:
-                return index
-            index -= 1
-        # fix this
-        for left in range(7):
-            for right in range(left + 1, 7):
-                if (left, right) in self._hand:
-                    return index
-            index -= 1
-        assert False, 'Error: %s have no dominoes' % self._type
+        doubles = [[value, value] for value in range(1, 7)]
+        non_doubles = [[left, right] for left in range(7) for right in range(left + 1, 7)]
+        non_doubles.sort(key=sum)
+        dominoes = (doubles + non_doubles)[::-1]
+        for i in range(len(dominoes) - 1, -1, -1):
+            if tuple(dominoes[i]) in self._hand:
+                return i
+        assert False, 'Error: %s have no dominoes for some reason' % self._type
 
     def get_available_moves(self, table, first_move):
         result = set()
@@ -53,7 +49,7 @@ class Player:
             for _ in range(2):
                 # not first_move is used to make  the list of
                 # available dominoes during the first move a bit more clear
-                # (i.e. we will only have 'right' sides during the first move)
+                # (i.e. it will have only 'right' sides during the first move)
                 if not first_move and table.can_add_to_the_left((left, right)):
                     result.add(((left, right), 'left'))
                 if table.can_add_to_the_right((left, right)):
@@ -75,6 +71,7 @@ class Human(Player):
             print('You have no valid dominoes so you get one domino from the deck\n')
             self.add_domino(deck.eject_domino())
             keyboard.wait('enter')
+            time.sleep(0.1)
 
         if not self.can_make_move(table, first_move):
             return None
@@ -97,15 +94,17 @@ class Human(Player):
         # each keyboard implementation library have no
         # on_release function or it is implemented in a weird way
         # so time.sleep is used to prevent too fast key presses
+        #
+        # also, time.sleep helps to make the rendering a bit smoother =)
         while True:
             if keyboard.is_pressed('down'):
                 position = min(position + 1, len(moves) - 1)
                 draw_move()
-                time.sleep(0.05)
+                time.sleep(0.1)
             elif keyboard.is_pressed('up'):
                 position = max(0, position - 1)
                 draw_move()
-                time.sleep(0.05)
+                time.sleep(0.1)
             elif keyboard.is_pressed('enter'):
                 return moves[position]
 
@@ -120,10 +119,11 @@ class Computer(Player):
             print('Computer has no valid dominoes so he gets one domino from the deck\n')
             self.add_domino(deck.eject_domino())
             keyboard.wait('enter')
+            time.sleep(0.1)
 
         if not self.can_make_move(table, first_move):
             return None
 
-        domino, side = choice(self.get_available_moves(table, first_move))
+        domino, side = random.choice(self.get_available_moves(table, first_move))
 
         return domino, side
