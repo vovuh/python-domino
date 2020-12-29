@@ -4,5 +4,8 @@
 from Game import Game
 
 if __name__ == '__main__':
-    game = Game()
-    game.play()
+    while True:
+        game = Game()
+        need_to_continue = game.play()
+        if not need_to_continue:
+            break

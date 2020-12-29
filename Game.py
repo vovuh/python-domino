@@ -80,10 +80,11 @@ class Game:
             current_player, next_player = next_player, current_player
 
         print('Press ESC to exit or enter to start a new game\n')
+        time.sleep(0.1)
         while True:
             if keyboard.is_pressed('enter'):
                 time.sleep(0.1)
-                break
+                return True
             elif keyboard.is_pressed('esc'):
                 time.sleep(0.1)
-                return
+                return False
